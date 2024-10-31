@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="insurance_category_form_view" model="ir.ui.view">
+            <field name="name">insurance.category.form.view</field>
+            <field name="model">insurance.category</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Insurance Category">
+                                <field name="category"/>
+                            </group>
+                            <group string="Category Code">
+                                <field name="category_code"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="life_insurance" string="Life Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'life')]}">
+                                <group string="Insured Details">
+                                    <group>
+                                        <field name="life_insured_age"/>
+                                    </group>
+                                    <group>
+                                        <field name="desired_death_amount"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Length of Coverage Terms">
+                                    <field name="length_of_coverage_term" nolabel="1"/>
+                                </group>
+                                <group string="Health History">
+                                    <field name="life_health_history" nolabel="1"/>
+                                </group>
+                                <group string="Occupation and Hobbies">
+                                    <field name="occupation_and_hobbies" nolabel="1"/>
+                                </group>
+                                <group string="Family Medical History">
+                                    <field name="family_medical_history" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="health_insurance" string="Health Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'health')]}">
+                                <group>
+                                    <group>
+                                        <field name="health_insured_age"/>
+                                    </group>
+                                    <group>
+                                        <field name="desired_coverage_type" widget="radio"
+                                               options="{'horizontal': true}"/>
+                                    </group>
+                                </group>
+                                <group string="Out of Pocket Maximum">
+                                    <field name="out_of_pocket_maximum" nolabel="1"/>
+                                </group>
+                                <group string="Health History">
+                                    <field name="health_history_of_insured" nolabel="1"/>
+                                </group>
+                                <group string="Prescription Drug Coverage">
+                                    <field name="drug_coverage" nolabel="1"/>
+                                </group>
+                                <group string="Preferred Healthcare Provider Network">
+                                    <field name="healthcare_provider_network" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="property_insurance" string="Property Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'property')]}">
+                                <group string="Property Details">
+                                    <group>
+                                        <field name="construct_year"/>
+                                    </group>
+                                    <group>
+                                        <field name="property_value"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Property Coverage Limits">
+                                    <field name="property_coverage_limits" nolabel="1"/>
+                                </group>
+                                <group string="Construction Type and Materials">
+                                    <field name="construction_type_and_materials" nolabel="1"/>
+                                </group>
+                                <group string="Special Features of the Property">
+                                    <field name="special_features_of_the_property" nolabel="1"/>
+                                </group>
+                                <group string="Personal Property Inventory">
+                                    <field name="personal_property_inventory" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="liability_insurance" string="Liability Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'liability')]}">
+                                <group string="Insured Details">
+                                    <group>
+                                        <field name="liability_coverage_type" widget="radio"
+                                               options="{'horizontal': true}"/>
+                                    </group>
+                                    <group>
+                                        <field name="type_of_liability_risk" widget="radio"
+                                               options="{'horizontal': true}"/>
+                                    </group>
+                                </group>
+                                <group string="Desired Coverage Limits">
+                                    <field name="desired_coverage_limits" nolabel="1"/>
+                                </group>
+                                <group string="Business Type and Operations (for Business Liability Insurance)">
+                                    <field name="business_type_and_operations" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="disability_insurance" string="Disability Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'disability')]}">
+                                <group string="Insured Details">
+                                    <group>
+                                        <field name="income"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Length of Coverage Period">
+                                    <field name="length_coverage_disability_period" nolabel="1"/>
+                                </group>
+                                <group string="Health History">
+                                    <field name="disability_health_history" nolabel="1"/>
+                                </group>
+                                <group string="Occupation and Hobbies">
+                                    <field name="occupation_and_hobbies" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="travel_insurance" string="Travel Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'travel')]}">
+                                <group string="Travel Details">
+                                    <group>
+                                        <field name="types_of_coverage" widget="radio" options="{'horizontal': true}"/>
+                                    </group>
+                                </group>
+                                <group string="Traveler Health History">
+                                    <field name="traveler_health_history" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="pet_insurance" string="Pet Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'pet')]}">
+                                <group>
+                                    <group>
+                                        <field name="pet_desired_coverage_type" widget="radio"
+                                               options="{'horizontal': true}"/>
+                                    </group>
+                                    <group>
+                                        <field name="exclusions" widget="radio" options="{'horizontal': true}"/>
+                                    </group>
+                                </group>
+                                <group string="Coverage Limits">
+                                    <field name="pet_coverage_limits" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="business_insurance" string="Business Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'business')]}">
+                                <group string="Insured Details">
+                                    <group>
+                                        <field name="business_desired_coverage_type" widget="radio"
+                                               options="{'horizontal': true}"/>
+                                    </group>
+                                    <group>
+                                        <field name="business_property_value"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Business Type and Operations">
+                                    <field name="business_type_operation" nolabel="1"/>
+                                </group>
+                                <group string="Business Coverage Limits">
+                                    <field name="business_coverage_limits" nolabel="1"/>
+                                </group>
+                                <group string="Industry Specific Risks(Such as Malpractice Insurance for Healthcare Providers)">
+                                    <field name="industry_specific_risks" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="auto_insurance" string="Auto Insurance Policy Details"
+                                  attrs="{'invisible': [('category', '!=', 'auto')]}">
+                                <group string="Vehicle Details">
+                                    <group>
+                                        <field name="coverage_type" widget="radio" options="{'horizontal': true}"/>
+                                    </group>
+                                </group>
+                                <group string="Driving History">
+                                    <field name="driving_history" nolabel="1"/>
+                                </group>
+                                <group string="Coverage Limits">
+                                    <field name="coverage_limits" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="insurance_category_tree_view" model="ir.ui.view">
+            <field name="name">insurance.category.tree.view</field>
+            <field name="model">insurance.category</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="category"/>
+                    <field name="category_code"/>
+                </tree>
+            </field>
+        </record>
+        <record id="insurance_category_search_view" model="ir.ui.view">
+            <field name="name">insurance.category.search.view</field>
+            <field name="model">insurance.category</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <group string="Group By">
+                        <filter name="category" string="Category"
+                                context="{'group_by': 'category'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_insurance_category" model="ir.actions.act_window">
+            <field name="name">Policy Category</field>
+            <field name="res_model">insurance.category</field>
+            <field name="view_mode">tree,form,search</field>
+        </record>
+    </data>
+</odoo>

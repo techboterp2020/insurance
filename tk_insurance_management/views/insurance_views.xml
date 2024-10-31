@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="insurance_information_view_form" model="ir.ui.view">
+            <field name="name">insurance.information.view.form</field>
+            <field name="model">insurance.information</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="instalment_complete" invisible="1"/>
+                        <field name="state" widget="statusbar"/>
+                        <button string="Expired" name="running_to_expired" type="object"
+                                attrs="{'invisible': [('state', 'not in', ['running'])]}"/>
+                        <button class="oe_highlight" type="object" name="action_insurance_invoice"
+                                string="Fixed Invoice"
+                                attrs="{'invisible': ['|', ('invoice_id', '!=', False), ('premium_type', '=', 'installment')]}"/>
+                        <button class="oe_highlight" type="object" name="action_create_emi_installment"
+                                string="Installment Invoice"
+                                attrs="{'invisible': ['|', ('instalment_complete', '=', True), ('premium_type', '=', 'fixed')]}"/>
+                        <button name="%(action_insurance_claim)d" string="Create Claim" type="action"
+                                class="oe_highlight" attrs="{'invisible': [('state', '!=', 'running')]}"
+                                context="{'default_insurance_id': active_id}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box" position="inside">
+                            <button class="oe_stat_button" type="object" name="action_insured_document"
+                                    icon="fa-fw o_button_icon fa-id-card-o">
+                                <field string="Documents" name="document_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button" type="object" name="action_insured_claim"
+                                    icon="fa-bars">
+                                <field string="Claims" name="claim_count" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="insurance_number"/>
+                            <h1>
+                                <field name="insurance_number"/>
+                            </h1>
+                        </div>
+                        <group string="Policy Details">
+                            <group>
+                                <field name="insurance_category_id"/>
+                                <field name="insurance_sub_category_id"/>
+                                <field name="insurance_policy_id"/>
+                                <field name="insurance_buying_for_id"/>
+                            </group>
+                            <group>
+                                <label for="issue_date" string="Issue Date"/>
+                                <div class="address_format">
+                                    <field name="issue_date" style="width: 45%"/>
+                                    <strong>&#160;&#160;&#160;Expiry Date&#160;&#160;</strong>
+                                    <field name="expiry_date" style="width: 18%"/>
+                                </div>
+                                <label for="insurance_time_period" string="Policy Term"/>
+                                <div class="address_format">
+                                    <field name="insurance_time_period" style="width: 40%"/>
+                                    <strong>&#160;&#160;&#160;Policy Amount&#160;&#160;</strong>
+                                    <field name="policy_amount" style="width: 18%" readonly="1" force_save="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="company_id" invisible="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Agent Details">
+                                <field name="agent_id"/>
+                                <field name="agent_phone"/>
+                            </group>
+                            <group string="Agent Commission Details">
+                                <field name="commission_type" widget="radio" options="{'horizontal': true}"/>
+                                <label for="commission" string="Commission (%)"/>
+                                <div class="address_format">
+                                    <field name="commission" style="width: 27%"/>
+                                    <strong>&#160;&#160;&#160;Total Commission&#160;&#160;</strong>
+                                    <field name="total_commission" style="width: 25%" force_save="1" readonly="1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Insured Details">
+                                <field name="insured_id"/>
+                                <label for="dob" string="Date of Birth"/>
+                                <div class="address_format">
+                                    <field name="dob" style="width: 47%"/>
+                                    <strong>&#160;&#160;&#160;Age&#160;&#160;</strong>
+                                    <field name="age" style="width: 30%"/>
+                                </div>
+                                <field name="gender"/>
+                            </group>
+                            <group string="Nominee Details">
+                                <field name="insurance_nominee_id"/>
+                                <field name="your_nominee_is_your"/>
+                                <field name="nominee_dob"/>
+                                <field name="category" invisible="1"/>
+                            </group>
+                        </group>
+                        <group string="Life Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'life')]}">
+                            <group>
+                                <field name="life_insured_age"
+                                       attrs="{'required': [('category', '=', 'life')]}"/>
+                                <field name="is_smoking_status" widget="radio" options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <field name="desired_death_amount" attrs="{'required': [('category', '=', 'life')]}"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <group attrs="{'invisible': [('category', '!=', 'life')]}">
+                            <group string="Length of Coverage Terms">
+                                <field name="length_of_coverage_term" nolabel="1"/>
+                            </group>
+                            <group string="Health History of Insured">
+                                <field name="life_health_history" nolabel="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'life')]}">
+                            <group string="Occupation and Hobbies of Insured">
+                                <field name="occupation_and_hobbies" nolabel="1"/>
+                            </group>
+                            <group string="Family Medical History of Insured">
+                                <field name="family_medical_history" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Health Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'health')]}">
+                            <group>
+                                <field name="health_insured_age" attrs="{'required': [('category', '=', 'health')]}"/>
+                                <field name="desired_coverage_type" widget="radio"
+                                       options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <field name="health_deductible_amount"/>
+                                <field name="copay_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <group attrs="{'invisible': [('category', '!=', 'health')]}">
+                            <group string="Out of Pocket Maximum">
+                                <field name="out_of_pocket_maximum" nolabel="1"/>
+                            </group>
+                            <group string="Health History of Insured">
+                                <field name="health_history_of_insured" nolabel="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'health')]}">
+                            <group string="Prescription Drug Coverage">
+                                <field name="drug_coverage" nolabel="1"/>
+                            </group>
+                            <group string="Preferred Healthcare Provider Network">
+                                <field name="healthcare_provider_network" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Property Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'property')]}">
+                            <group>
+                                <field name="construct_year" attrs="{'required': [('category', '=', 'property')]}"/>
+                                <field name="desired_coverage_types"
+                                       attrs="{'required': [('category', '=', 'property')]}"/>
+                            </group>
+                            <group>
+                                <span class="o_form_label o_td_label" name="address_name">
+                                    <strong>Address</strong>
+                                </span>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                    <field name="city" placeholder="City" class="o_address_city"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State"
+                                           options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                    <field name="country_id" placeholder="Country" class="o_address_country"
+                                           options="{'no_create':True,'no_create_edit':True,'no_open':True}"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'property')]}">
+                            <group>
+                                <field name="property_value" attrs="{'required': [('category', '=', 'property')]}"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="property_deductible_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+
+                        <group attrs="{'invisible': [('category', '!=', 'property')]}">
+                            <group string="Property Coverage Limits">
+                                <field name="property_coverage_limits" nolabel="1"/>
+                            </group>
+                            <group string="Construction Type and Materials">
+                                <field name="construction_type_and_materials" nolabel="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'property')]}">
+                            <group string="Special Features of the Property">
+                                <field name="special_features_of_the_property" nolabel="1"/>
+                            </group>
+                            <group string="Personal Property Inventory">
+                                <field name="personal_property_inventory" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Liability Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'liability')]}">
+                            <group>
+                                <field name="liability_coverage_type" widget="radio"
+                                       options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <field name="type_of_liability_risk"
+                                       attrs="{'required': [('category', '=', 'liability')]}"/>
+                            </group>
+                        </group>
+
+                        <group attrs="{'invisible': [('category', '!=', 'liability')]}">
+                            <group string="Desired Coverage Limits">
+                                <field name="desired_coverage_limits" nolabel="1"/>
+                            </group>
+                            <group string="Business Type and Operations (for Business Liability Insurance)">
+                                <field name="business_type_and_operations" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Disability Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'disability')]}">
+                            <group>
+                                <field name="occupation" attrs="{'required': [('category', '=', 'disability')]}"/>
+                                <field name="insured_is_smoking"/>
+                            </group>
+                            <group>
+                                <field name="income" attrs="{'required': [('category', '=', 'disability')]}"/>
+                                <field name="disability_desired_benefit_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'disability')]}">
+                            <group string="Length of Coverage Period">
+                                <field name="length_coverage_disability_period" nolabel="1"/>
+                            </group>
+                            <group string="Health History">
+                                <field name="disability_health_history" nolabel="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'disability')]}">
+                            <group string="Occupation and Hobbies of Insured">
+                                <field name="occupation_and_hobbies" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Travel Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'travel')]}">
+                            <group>
+                                <field name="types_of_coverage" widget="radio" options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <label for="trip_length"/>
+                                <div class="o_row">
+                                    <field name="trip_length" attrs="{'required': [('category', '=', 'travel')]}"/>
+                                    <field name="odometer_unit"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Traveler Health History" attrs="{'invisible': [('category', '!=', 'travel')]}">
+                            <field name="traveler_health_history" nolabel="1"/>
+                        </group>
+
+                        <group string="Pet Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'pet')]}">
+                            <group>
+                                <label for="age_of_breed_of_the_pet" string="Age"/>
+                                <div class="address_format">
+                                    <field name="age_of_breed_of_the_pet" style="width: 35%"
+                                           attrs="{'required': [('category', '=', 'pet')]}"/>
+                                    <strong>&#160;&#160;Years&#160;&#160;</strong>
+                                </div>
+                                <field name="pet_desired_coverage_type" widget="radio" options="{'horizontal': true}"/>
+                            </group>
+                            <group>
+                                <field name="exclusions" widget="radio" options="{'horizontal': true}"/>
+                                <field name="pet_deductible_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group string="Coverage Limits" attrs="{'invisible': [('category', '!=', 'pet')]}">
+                            <field name="pet_coverage_limits" nolabel="1"/>
+                        </group>
+
+                        <group string="Business Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'business')]}">
+                            <group>
+                                <field name="business_desired_coverage_type" widget="radio"
+                                       options="{'horizontal': true}"/>
+                                <field name="business_property_value"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="number_of_employees"
+                                       attrs="{'required': [('category', '=', 'business')]}"/>
+                                <field name="business_deductible_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'business')]}">
+                            <group string="Business Type and Operations">
+                                <field name="business_type_operation" nolabel="1"/>
+                            </group>
+                            <group string="Business Coverage Limits">
+                                <field name="business_coverage_limits" nolabel="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'business')]}">
+                            <group string="Industry Specific Risks(Such as Malpractice Insurance for Healthcare Providers)">
+                                <field name="industry_specific_risks" nolabel="1"/>
+                            </group>
+                        </group>
+
+                        <group string="Auto Insurance Policy Details"
+                               attrs="{'invisible': [('category', '!=', 'auto')]}">
+                            <group>
+                                <field name="vehicle_name" attrs="{'required': [('category', '=', 'auto')]}"/>
+                                <field name="model"/>
+                                <field name="year"/>
+                                <field name="vin_no" attrs="{'required': [('category', '=', 'auto')]}"/>
+                            </group>
+                            <group>
+                                <field name="reg_no" attrs="{'required': [('category', '=', 'auto')]}"/>
+                                <field name="usage_of_vehicle" widget="radio" options="{'horizontal': true}"/>
+                                <field name="additional_driver"
+                                       attrs="{'invisible': [('usage_of_vehicle', '!=', 'commercial')]}"/>
+                                <field name="coverage_type" widget="radio" options="{'horizontal': true}"/>
+                                <field name="auto_deductible_amount"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group attrs="{'invisible': [('category', '!=', 'auto')]}">
+                            <group string="Driving History">
+                                <field name="driving_history" nolabel="1"/>
+                            </group>
+                            <group string="Coverage Limits">
+                                <field name="coverage_limits" nolabel="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="payment_details" string="Payment Details">
+                                <group>
+                                    <group string="Types of Payments">
+                                        <field name="premium_type" widget="radio" options="{'horizontal': true}"
+                                               attrs="{'readonly': [('instalment_complete', '=', True)]}"/>
+                                    </group>
+                                    <group string="Payment Details">
+                                        <field name="currency_id" invisible="1"/>
+                                        <label for="total_policy_amount" string="Total Policy Amount"/>
+                                        <div class="address_format">
+                                            <field name="total_policy_amount" force_save="1" readonly="1"
+                                                   style="width: 30%"/>
+                                            <strong attrs="{'invisible': [('premium_type', '=', 'fixed')]}">&#160;&#160;Monthly
+                                                Installments&#160;&#160;
+                                            </strong>
+                                            <field name="monthly_installment"
+                                                   attrs="{'invisible': [('premium_type', '=', 'fixed')]}" readonly="1"
+                                                   force_save="1"/>
+                                        </div>
+
+                                        <label for="invoice_id" string="Insurance Invoice"
+                                               attrs="{'invisible':['|', ('invoice_id','=',False), ('premium_type', '=', 'installment')]}"/>
+                                        <div class="address_format">
+                                            <field name="invoice_id"
+                                                   attrs="{'invisible':['|', ('invoice_id','=',False), ('premium_type', '=', 'installment')]}"
+                                                   readonly="1" force_save="1" style="width: 40%"/>
+                                            <field name="payment_state" widget="badge"
+                                                   decoration-success="payment_state=='paid'"
+                                                   decoration-danger="payment_state=='not_paid'"
+                                                   decoration-info="payment_state=='in_payment'"
+                                                   decoration-primary="payment_state=='partial'"
+                                                   decoration-warning="payment_state=='reversed'" nolabel="1"
+                                                   style="width: 25%"/>
+                                        </div>
+                                        <field name="duration" invisible="1"/>
+                                    </group>
+                                </group>
+                                <field name="insurance_emi_ids" attrs="{'invisible': [('premium_type', '=', 'fixed')]}">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="installment_date"/>
+                                        <field name="premium_type" invisible="1"/>
+                                        <field name="installment_amount" sum="installment_amount"/>
+                                        <field name="invoice_id" readonly="1"/>
+                                        <field name="payment_state" widget="badge"
+                                               decoration-success="payment_state=='paid'"
+                                               decoration-danger="payment_state=='not_paid'"
+                                               decoration-info="payment_state=='in_payment'"
+                                               decoration-primary="payment_state=='partial'"
+                                               decoration-warning="payment_state=='reversed'"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <button class="oe_highlight" type="object" name="action_insurance_invoice"
+                                                string="Invoice"
+                                                attrs="{'invisible': [('invoice_id', '!=', False)]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <page name="policy_terms_and_condition" string="Terms &amp; Conditions">
+                                <field name="policy_terms_and_conditions"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="insurance_information_view_tree" model="ir.ui.view">
+            <field name="name">insurance.information.view.tree</field>
+            <field name="model">insurance.information</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="insurance_number"/>
+                    <field name="insured_id"/>
+                    <field name="agent_id"/>
+                    <field name="insurance_category_id"/>
+                    <field name="issue_date"/>
+                    <field name="expiry_date"/>
+                </tree>
+            </field>
+        </record>
+        <record id="insurance_information_calendar_view" model="ir.ui.view">
+            <field name="name">insurance.information.calendar.view</field>
+            <field name="model">insurance.information</field>
+            <field name="arch" type="xml">
+                <calendar string="Insurance Information Calendar"
+                          date_start="issue_date"
+                          date_stop="expiry_date"
+                          event_open_popup="true"
+                          mode="month"
+                          color="insured_id"
+                          scales="day,month,year"
+                          quick_add="False">
+                    <field name="insurance_category_id" filters="1"/>
+                    <field name="insurance_number"/>
+                </calendar>
+            </field>
+        </record>
+        <record id="insurance_information_search_view" model="ir.ui.view">
+            <field name="name">insurance.information.search.view</field>
+            <field name="model">insurance.information</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="insured_id"/>
+                    <field name="insurance_number"/>
+                    <group string="Group By">
+                        <filter name="insured_id" string="Applicant Name"
+                                context="{'group_by':'insured_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="insurance_information_action" model="ir.actions.act_window">
+            <field name="name">Insurance</field>
+            <field name="res_model">insurance.information</field>
+            <field name="view_mode">tree,form,calendar,search</field>
+        </record>
+    </data>
+</odoo>

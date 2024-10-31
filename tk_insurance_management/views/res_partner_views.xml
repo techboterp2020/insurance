@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="res_partner_form_view" model="ir.ui.view">
+            <field name="name">res.partner.form.view</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='function']" position="before">
+                    <field name="is_customer" attrs="{'invisible': [('is_agent', '=', True)]}"/>
+                    <field name="is_agent" attrs="{'invisible': [('is_customer', '=', True)]}"/>
+                </xpath>
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" type="object" name="action_agent_commission"
+                            icon="fa-check"
+                            attrs="{'invisible': [('is_customer', '=', True)]}">
+                        <div class="o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="agent_total_commission"/>
+                            </span>
+                            <span class="o_stat_text">Commission</span>
+                        </div>
+                    </button>
+                </div>
+                <xpath expr="//notebook/page[@name='contact_addresses']" position="before">
+                    <page name="insurance" string="Insurance Details" attrs="{'invisible': [('is_agent', '!=', True)]}"
+                          autofocus="autofocus">
+                        <field name="insurance_information_ids">
+                            <tree>
+                                <field name="insurance_number"/>
+                                <field name="insured_id"/>
+                                <field name="agent_id" invisible="1"/>
+                                <field name="insurance_category_id"/>
+                                <field name="issue_date"/>
+                                <field name="expiry_date"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="action_res_partner_customer" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="res_model">res.partner</field>
+            <field name="domain">[('is_customer', '=', True)]</field>
+            <field name="context">{'default_is_customer': True}</field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+        <record id="action_res_partner_agent" model="ir.actions.act_window">
+            <field name="name">Agents</field>
+            <field name="res_model">res.partner</field>
+            <field name="domain">[('is_agent', '=', True)]</field>
+            <field name="context">{'default_is_agent': True}</field>
+            <field name="view_mode">kanban,tree,form</field>
+        </record>
+    </data>
+</odoo>
